@@ -88,7 +88,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/IDTVTemprature"
+            android:id="@+id/idTVTemperature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/idLLEDT"
@@ -103,13 +103,13 @@
             android:id="@+id/IdIVIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/IDTVTemprature"
+            android:layout_below="@id/idTVTemperature"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
             android:src="@mipmap/ic_launcher" />
 
         <TextView
-            android:id="@+id/IdTVCondition"
+            android:id="@+id/IdTvConditions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/IdIVIcon"
