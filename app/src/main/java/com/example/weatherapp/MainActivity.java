@@ -42,17 +42,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-    private RelativeLayout homerl;
-    private ProgressBar loadingpb;
-    private TextView citynametv, tempraturetv, conditiontv;
-    private TextInputEditText cityedt;
-    private ImageView Iconiv, backiv, searchiv;
+    private RelativeLayout homeRl;
+    private ProgressBar loadingPb;
+    private TextView cityNameTv, temperatureTv, conditionTv;
+    private TextInputEditText cityEdt;
+    private ImageView IconIv, backIv, searchIv;
     private FusedLocationProviderClient fusedLocationClient;
-    private RecyclerView weatherrv;
+    private RecyclerView weatherRv;
     private ArrayList<WeatherRVModal> weatherRVModalArrayList;
     private WeatherRVAdapter weatherRVAdapter;
-    private int PERMISSION_CODE = 1;
-    private String cityname;
+    private final int PERMISSION_CODE = 1;
+    private String cityName;
 
 
     @Override
@@ -62,19 +62,19 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         setContentView(R.layout.activity_main);
-        homerl = findViewById(R.id.IDRLHOME);
-        loadingpb = findViewById(R.id.PBLoading);
-        citynametv = findViewById(R.id.idTVCityName);
-        tempraturetv = findViewById(R.id.IDTVTemprature);
-        conditiontv = findViewById(R.id.IdTVCondition);
-        cityedt = findViewById(R.id.idEdtcity);
-        Iconiv = findViewById(R.id.IdIVIcon);
-        backiv = findViewById(R.id.IVBack);
-        searchiv = findViewById(R.id.idIVSRCH);
-        weatherrv = findViewById(R.id.idRVWeather);
+        homeRl = findViewById(R.id.IDRLHOME);
+        loadingPb = findViewById(R.id.PBLoading);
+        cityNameTv = findViewById(R.id.idTVCityName);
+        temperatureTv = findViewById(R.id.idTVTemperature);
+        conditionTv = findViewById(R.id.IdTvConditions);
+        cityEdt = findViewById(R.id.idEdtcity);
+        IconIv = findViewById(R.id.IdIVIcon);
+        backIv = findViewById(R.id.IVBack);
+        searchIv = findViewById(R.id.idIVSRCH);
+        weatherRv = findViewById(R.id.idRVWeather);
         weatherRVModalArrayList = new ArrayList<>();
         weatherRVAdapter = new WeatherRVAdapter(this, weatherRVModalArrayList);
-        weatherrv.setAdapter(weatherRVAdapter);
+        weatherRv.setAdapter(weatherRVAdapter);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_CODE);
@@ -85,21 +85,21 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            cityname = getcityname(location.getLongitude(), location.getLatitude());
-                            getweatherinfo(cityname);
+                            cityName = getCityName(location.getLongitude(), location.getLatitude());
+                            getWeatherInfo(cityName);
                         }
                     }
                 });
 
-        searchiv.setOnClickListener(new View.OnClickListener() {
+        searchIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String city = cityedt.getText().toString();
+                String city = cityEdt.getText().toString();
                 if (city.isEmpty() || city.equals("")) {
                     Toast.makeText(MainActivity.this, "enter city name", Toast.LENGTH_SHORT).show();
                 } else {
-                    citynametv.setText(cityname);
-                    getweatherinfo(city);
+                    cityNameTv.setText(cityName);
+                    getWeatherInfo(city);
 
                 }
             }
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permissios granted..", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission granted..", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Please provide the permissions", Toast.LENGTH_SHORT).show();
                 finish();
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String getcityname(double longitude, double latitude) {
+    private String getCityName(double longitude, double latitude) {
         String cityname = "Not found";
         Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
         try {
@@ -145,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
         return cityname;
     }
 
-    private void getweatherinfo(String cityName) {
-        String url = "https://api.weatherapi.com/v1/current.json?key=f0e0c88eb45d40adb41180658211610&q=" + cityName + "&aqi=no";
-        citynametv.setText(cityName);
+    private void getWeatherInfo(String cityName) {
+        String url = "https://api.weatherapi.com/v1/forecast.json?key=f0e0c88eb45d40adb41180658211610&q=" + cityName + "&days=1&aqi=yes&alerts=yes";
+        cityNameTv.setText(cityName);
         RequestQueue queue = Volley.newRequestQueue(this);
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
@@ -155,36 +155,36 @@ public class MainActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-
-
-                loadingpb.setVisibility(View.GONE);
-                homerl.setVisibility(View.VISIBLE);
+                loadingPb.setVisibility(View.GONE);
+                homeRl.setVisibility(View.VISIBLE);
                 weatherRVModalArrayList.clear();
                 try {
-                    String tamprature = response.getJSONObject("current").getString("temp_c");
-                    tempraturetv.setText(tamprature + "°c");
-                    int isday = response.optJSONObject("current").getInt("is_day");
+                    String temperature = response.getJSONObject("current").getString("temp_c");
+                    temperatureTv.setText(temperature + "°c");
+                    int isDay = response.optJSONObject("current").getInt("is_day");
                     String condition = response.getJSONObject("current").getJSONObject("condition").getString("text");
-                    String conditionicon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
-                    Picasso.get().load("http:".concat(conditionicon)).into(Iconiv);
-                    conditiontv.setText(condition);
-                    if (isday == 1) {
-                        //morning
-                        Picasso.get().load("https://media.istockphoto.com/photos/panorama-blue-sky-and-clouds-with-daylight-natural-background-picture-id1263264401?b=1&k=20&m=1263264401&s=170667a&w=0&h=MGYX3CWnqqkb82ps4jeyIczq5_zl2hPt3s9wUdBYhpQ=").into(backiv);
+                    String conditionIcon = response.getJSONObject("current").getJSONObject("condition").getString("icon");
+                    Picasso.get().load("http:".concat(conditionIcon)).into(IconIv);
+                    conditionTv.setText(condition);
+                    if (isDay == 1) {
+                        Picasso.get().load("https://media.istockphoto.com/photos/panorama-blue-sky-and-clouds-with-daylight-natural-background-picture-id1263264401?b=1&k=20&m=1263264401&s=170667a&w=0&h=MGYX3CWnqqkb82ps4jeyIczq5_zl2hPt3s9wUdBYhpQ=").into(backIv);
                     } else {
-                        Picasso.get().load("https://media.istockphoto.com/photos/sky-full-of-stars-picture-id512250305?b=1&k=20&m=512250305&s=170667a&w=0&h=x_Y7xuAMU6llJlKGm7dXDZsCitof4mYGH0YmUasFha8=").into(backiv);
+                        Picasso.get().load("https://media.istockphoto.com/photos/sky-full-of-stars-picture-id512250305?b=1&k=20&m=512250305&s=170667a&w=0&h=x_Y7xuAMU6llJlKGm7dXDZsCitof4mYGH0YmUasFha8=").into(backIv);
                     }
-                    JSONObject forecastobj = response.getJSONObject("forecast");
-                    JSONObject forecastO = forecastobj.getJSONArray("forecastday").getJSONObject(0);
+                    JSONObject forecastObj = response.getJSONObject("forecast");
+                    JSONObject forecastO = forecastObj.getJSONArray("forecastday").getJSONObject(0);
                     JSONArray hourArray = forecastO.getJSONArray("hour");
                     for (int i = 0; i < hourArray.length(); i++) {
-                        JSONObject hourobj = hourArray.getJSONObject(i);
-                        String time = hourobj.getString("time");
-                        String temper = hourobj.getString("temp_c");
-                        String img = hourobj.getJSONObject("condition").getString("icon");
-                        String wind = hourobj.getString("wind_kph");
+                        JSONObject hourObj = hourArray.getJSONObject(i);
+                        String time = hourObj.getString("time");
+                        String temper = hourObj.getString("temp_c");
+                        String img = hourObj.getJSONObject("condition").getString("icon");
+                        String wind = hourObj.getString("wind_kph");
+                        WeatherRVModal modal = new WeatherRVModal(time, temper, img, wind);
                         weatherRVModalArrayList.add(new WeatherRVModal(time, temper, img, wind));
+                        Log.d("vivz", "data updated");
                     }
+                    Log.d("vivz", "data updated called");
                     weatherRVAdapter.notifyDataSetChanged();
 
 
